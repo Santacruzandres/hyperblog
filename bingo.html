@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Numbers</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .random-number { display: inline-block; margin: 5px; padding: 10px; border: 1px solid #ccc; }
+    .drawn-numbers { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container text-center mt-5">
+    <h1>Random Numbers</h1>
+    <div id="drawnNumber" class="random-number"></div>
+    <div id="drawnNumbers" class="drawn-numbers"></div>
+    <div class="mt-3">
+      <label for="intervalInput">Interval (seconds): </label>
+      <input type="number" id="intervalInput" value="3" min="1">
+      <button id="startButton" class="btn btn-primary">Start Drawing</button>
+      <button id="stopButton" class="btn btn-danger">Stop Drawing</button>
+    </div>
+  </div>
+
+  <script>
+    let intervalId;
+    const drawnNumbers = [];
+    const drawnNumberDiv = document.getElementById('drawnNumber');
+    const drawnNumbersDiv = document.getElementById('drawnNumbers');
+
+    function generateRandomNumber() {
+      const min = 1;
+      const max = 75;
+
+      if (drawnNumbers.length === max) {
+        clearInterval(intervalId);
+        alert("All numbers have been drawn!");
+        return;
+      }
+
+      let randomNumber;
+      do {
+        randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+      } while (drawnNumbers.includes(randomNumber));
+
+      drawnNumbers.push(randomNumber);
+      drawnNumberDiv.textContent = randomNumber;
+      drawnNumbersDiv.textContent = drawnNumbers.join(', ');
+    }
+
+    function startDrawing() {
+      const intervalSeconds = document.getElementById('intervalInput').value;
+      intervalId = setInterval(generateRandomNumber, intervalSeconds * 1000);
+    }
+
+    function stopDrawing() {
+      clearInterval(intervalId);
+    }
+
+    document.getElementById('startButton').addEventListener('click', startDrawing);
+    document.getElementById('stopButton').addEventListener('click', stopDrawing);
+  </script>
+</body>
+</html>

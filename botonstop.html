@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo IANDRES</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .ball { background-color: #ffc107; font-size: 120px; border: 2px solid #000; border-radius: 50%; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .marked { background-color: #ffc107; }
+    td.ball-number {font-size: 2.1rem;}
+  </style>
+  
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center">Bingo IANDERS</h1>
+    <div id="ball" class="ball"></div>
+    
+    <table class="table table-bordered text-center mt-5">
+      <tbody id="bingoTableBody">
+        <!-- Table rows will be generated here -->
+      </tbody>
+    </table>
+    <div class="text-center">
+      <button id="startButton" class="btn btn-primary mr-2">Start</button>
+      <button id="pauseButton" class="btn btn-success mr-2">BINGO</button>
+      
+      <label for="intervalInput"></label>
+      <input type="number" id="intervalInput" value="3" min="1" class="mr-2">
+      <button id="changeIntervalButton" class="btn btn-info">Change Seconds</button>
+      <button id="stopButton" class="btn btn-danger mr-2">Stop</button>
+    </div>
+  </div>
+
+  <script>
+    let intervalId;
+    let drawnNumbers = [];
+    let intervalSeconds = 3;
+    const ballDiv = document.getElementById('ball');
+
+    function generateRandomNumber() {
+      if (drawnNumbers.length === 75) {
+        clearInterval(intervalId);
+        alert("All numbers have been drawn!");
+        return;
+      }
+
+      let randomNumber;
+      do {
+        randomNumber = Math.floor(Math.random() * 75) + 1;
+      } while (drawnNumbers.includes(randomNumber));
+
+      drawnNumbers.push(randomNumber);
+      ballDiv.textContent = randomNumber;
+      markNumber(randomNumber);
+    }
+
+    function markNumber(number) {
+      const cell = document.getElementById('cell' + number);
+      cell.classList.add('marked');
+    }
+
+    function startGame() {
+      intervalId = setInterval(generateRandomNumber, intervalSeconds * 1000);
+    }
+
+    function pauseGame() {
+      clearInterval(intervalId);
+    }
+
+    function stopGame() {
+      clearInterval(intervalId);
+      drawnNumbers = [];
+      ballDiv.textContent = '';
+      const cells = document.querySelectorAll('.ball-number');
+      cells.forEach(cell => cell.classList.remove('marked'));
+    }
+
+    function changeInterval() {
+      intervalSeconds = document.getElementById('intervalInput').value;
+      stopGame();
+      startGame();
+    }
+
+    function createBingoTable() {
+      const tableBody = document.getElementById('bingoTableBody');
+      let index = 0;
+      for (let i = 0; i < 5; i++) {
+        const row = document.createElement('tr');
+        for (let j = 0; j < 15; j++) {
+          const cell = document.createElement('td');
+          cell.className = 'ball-number';
+          index++;
+          cell.textContent = index;
+          cell.id = 'cell' + index;
+          row.appendChild(cell);
+        }
+        tableBody.appendChild(row);
+      }
+    }
+
+    document.getElementById('startButton').addEventListener('click', startGame);
+    document.getElementById('pauseButton').addEventListener('click', pauseGame);
+    document.getElementById('stopButton').addEventListener('click', stopGame);
+    document.getElementById('changeIntervalButton').addEventListener('click', changeInterval);
+
+    createBingoTable();
+  </script>
+</body>
+</html>
